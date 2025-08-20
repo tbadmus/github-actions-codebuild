@@ -39,6 +39,12 @@ resource "aws_codebuild_project" "github_actions_runner" {
     image_pull_credentials_type = "CODEBUILD"
   }
 
+  # VPC configuration: Places the runner in a specific VPC.
+  vpc_config {
+    vpc_id             = var.vpc_id
+    subnets            = var.subnet_ids
+    security_group_ids = var.security_group_ids
+  }
   # Artifacts configuration: Not needed for this runner setup.
   artifacts {
     type = "NO_ARTIFACTS"

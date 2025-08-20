@@ -63,6 +63,35 @@ resource "aws_iam_policy" "codebuild_policy" {
         Effect   = "Allow",
         Action   = "ssm:GetParameters",
         Resource = "arn:aws:ssm:${var.aws_region}:${data.aws_caller_identity.current.account_id}:parameter/CodeBuild/GitHub-*"
+      },
+      # Required for VPC access
+      {
+        Effect = "Allow",
+        Action = [
+          "ec2:CreateNetworkInterface",
+          "ec2:DescribeDhcpOptions",
+          "ec2:DescribeNetworkInterfaces",
+          "ec2:DeleteNetworkInterface",
+          "ec2:DescribeSubnets",
+          "ec2:DescribeSecurityGroups",
+          "ec2:DescribeVpcs"
+        ],
+        Resource = "*"
+      },
+      {
+        Effect = "Allow",
+        Action = [
+          "ec2:CreateNetworkInterfacePermission"
+        ],
+        Resource = "arn:aws:ec2:${var.aws_region}:${data.aws_caller_identity.current.account_id}:network-interface/*",
+        Condition = {
+          StringEquals = {
+            "ec2:Subnet" = [
+              for subnet in var.subnet_ids : "arn:aws:ec2:${var.aws_region}:${data.aws_caller_identity.current.account_id}:subnet/${subnet}"
+            ],
+            "ec2:AuthorizedService" = "codebuild.amazonaws.com"
+          }
+        }
       }
     ]
   })

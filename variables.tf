@@ -20,5 +20,20 @@ variable "github_repo_url" {
 variable "github_pat_secret_name" {
   description = "The name of the AWS Secrets Manager secret to store the GitHub PAT."
   type        = string
-  default     = "github-actions-pat"
+  default     = "github-actions-pat-lbadmus"
+}
+
+variable "vpc_id" {
+  description = "The ID of the VPC to launch the CodeBuild project in."
+  type        = string
+}
+
+variable "subnet_ids" {
+  description = "A list of subnet IDs for the CodeBuild project."
+  type        = list(string)
+}
+
+variable "security_group_ids" {
+  description = "A list of security group IDs to associate with the CodeBuild project."
+  type        = list(string)
 }
